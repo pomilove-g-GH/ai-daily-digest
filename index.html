@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Daily Digest — 매일 아침 AI 브리핑</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script src="manifest.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ===== THEMES (class-based only) ===== */
+    html.theme-dark {
+      --bg: #0a0b10; --surface: #14161f; --surface-hover: #20232f;
+      --sidebar: #0c0d14; --sidebar-2: #11131c;
+      --border: rgba(255,255,255,0.07); --border-strong: rgba(255,255,255,0.13);
+      --text: #ECEDF1; --text-secondary: #9a9fb0; --text-faint: #6b7080;
+      --accent: #6366f1; --accent-secondary: #8b5cf6;
+      --positive: #10b981; --negative: #f43f5e; --warning: #f59e0b;
+      --shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    html.theme-light {
+      --bg: #eef0f6; --surface: #ffffff; --surface-hover: #e9ebf2;
+      --sidebar: #ffffff; --sidebar-2: #f5f6fa;
+      --border: rgba(15,23,42,0.09); --border-strong: rgba(15,23,42,0.16);
+      --text: #14161f; --text-secondary: #5b6273; --text-faint: #8a90a0;
+      --accent: #4f46e5; --accent-secondary: #7c3aed;
+      --positive: #059669; --negative: #e11d48; --warning: #d97706;
+      --shadow: 0 16px 36px rgba(20,22,40,0.14);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
+      overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1, h2, h3 { letter-spacing: -0.03em; line-height: 1.2; }
+    h1 { font-weight: 800; } h2 { font-weight: 700; }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* ===== APP LAYOUT ===== */
+    .app { display: flex; height: 100vh; width: 100%; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 278px; flex-shrink: 0;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 40;
+    }
+    .sb-brand {
+      display: flex; align-items: center; gap: 11px;
+      padding: 20px 20px 16px;
+    }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      background: linear-gradient(140deg, #6366f1, #8b5cf6 55%, #3b82f6);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 16px rgba(99,102,241,0.4);
+    }
+    .brand-text .bt-title { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+    .brand-text .bt-sub { font-size: 11.5px; color: var(--text-faint); font-weight: 500; margin-top: 1px; }
+
+    .sb-datechip {
+      margin: 0 20px 14px;
+      display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      font-size: 11.5px; font-weight: 700; color: var(--accent-secondary);
+    }
+    .sb-datechip::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-secondary); box-shadow: 0 0 8px var(--accent-secondary);
+    }
+
+    /* date tabs */
+    .sb-dates {
+      display: flex; flex-wrap: wrap; gap: 7px;
+      padding: 0 16px 16px; margin: 0 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .date-tab {
+      padding: 7px 13px; border-radius: 9px;
+      background: var(--sidebar-2); border: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 12.5px; font-weight: 600;
+      transition: all 0.16s;
+    }
+    .date-tab:hover { color: var(--text); border-color: var(--border-strong); }
+    .date-tab.active {
+      background: linear-gradient(135deg, #5b63f0, #6366f1);
+      border-color: transparent; color: #fff;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.45);
+    }
+
+    /* topic list */
+    .sb-scroll { flex: 1; overflow-y: auto; padding: 16px 16px 8px; }
+    .sb-seclabel {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+      color: var(--text-faint); text-transform: uppercase;
+      padding: 0 6px 10px;
+    }
+    .topic-item {
+      display: flex; align-items: center; gap: 11px;
+      width: 100%; text-align: left;
+      padding: 11px 12px; margin-bottom: 6px;
+      border-radius: 11px;
+      background: transparent; border: 1px solid transparent;
+      color: var(--text-secondary);
+      transition: all 0.16s;
+    }
+    .topic-item:hover { background: var(--surface-hover); color: var(--text); }
+    .topic-item.active {
+      background: var(--surface);
+      border-color: var(--ti-line, var(--border-strong));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--ti-accent, var(--accent));
+    }
+    .ti-icon {
+      width: 30px; height: 30px; flex-shrink: 0;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--ti-soft); color: var(--ti-accent);
+    }
+    .ti-main { flex: 1; min-width: 0; }
+    .ti-label { font-size: 13px; font-weight: 600; line-height: 1.3; }
+    .ti-head {
+      font-size: 11px; color: var(--text-faint); font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .topic-item.active .ti-head { color: var(--text-secondary); }
+    .ti-chev { color: var(--text-faint); flex-shrink: 0; transition: transform 0.16s; }
+    .topic-item:hover .ti-chev { transform: translateX(2px); }
+
+    .sb-foot {
+      padding: 13px 22px; border-top: 1px solid var(--border);
+      font-size: 11.5px; color: var(--text-faint); font-weight: 500;
+    }
+    .sb-foot strong { color: var(--text-secondary); font-weight: 700; }
+
+    /* ===== CONTENT ===== */
+    .content { flex: 1; position: relative; background: var(--bg); min-width: 0; }
+    .content iframe {
+      width: 100%; height: 100%; border: 0; display: block;
+      background: var(--bg);
+    }
+    .content-loader {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 14px;
+      background: var(--bg); color: var(--text-faint);
+      font-size: 13px; transition: opacity 0.3s;
+    }
+    .content-loader.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 3px solid var(--border-strong);
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== TOP-RIGHT CONTROLS ===== */
+    .controls { position: fixed; top: 16px; right: 18px; z-index: 9999; display: flex; gap: 8px; }
+    .ctl-btn {
+      width: 40px; height: 40px; border-radius: 11px;
+      background: var(--surface); border: 1px solid var(--border-strong);
+      color: var(--text); display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: background 0.16s, transform 0.16s;
+    }
+    .ctl-btn:hover { background: var(--surface-hover); transform: translateY(-1px); }
+
+    .viz-menu { position: relative; }
+    .viz-menu-dropdown {
+      position: absolute; top: 48px; right: 0; min-width: 196px;
+      background: var(--surface); border: 1px solid var(--border-strong);
+      border-radius: 12px; padding: 7px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.18s; box-shadow: var(--shadow);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 9px 12px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text); font-size: 13px;
+      text-align: left; display: flex; align-items: center; gap: 10px;
+      transition: background 0.14s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown button svg { flex-shrink: 0; color: var(--text-secondary); }
+
+    /* ===== MOBILE DRAWER TOGGLE ===== */
+    .drawer-btn {
+      display: none; position: fixed; top: 16px; left: 16px; z-index: 9999;
+      width: 40px; height: 40px; border-radius: 11px;
+      background: var(--surface); border: 1px solid var(--border-strong);
+      color: var(--text); align-items: center; justify-content: center;
+      backdrop-filter: blur(12px);
+    }
+    .scrim {
+      display: none; position: fixed; inset: 0; z-index: 35;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate { animation: fadeInUp 0.4s ease-out both; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 860px) {
+      .drawer-btn { display: flex; }
+      .controls { top: 16px; right: 14px; }
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0;
+        transform: translateX(-100%);
+        transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: var(--shadow);
+      }
+      .app.drawer-open .sidebar { transform: translateX(0); }
+      .app.drawer-open .scrim { display: block; }
+    }
+    @media (max-width: 375px) {
+      body { overflow-x: hidden; }
+      .sidebar { width: 86vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    @media print {
+      .sidebar, .controls, .drawer-btn { display: none !important; }
+      .content iframe { height: auto; }
+    }
+
+    .skip-to-content {
+      position: absolute; top: -50px; left: 8px; z-index: 10000;
+      background: var(--accent); color: #fff; padding: 8px 14px;
+      border-radius: 6px; text-decoration: none; font-size: 13px;
+      transition: top 0.2s;
+    }
+    .skip-to-content:focus { top: 8px; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">본문으로 건너뛰기</a>
+
+  <!-- 모바일: 사이드바 열기 -->
+  <button class="drawer-btn" id="drawerBtn" onclick="toggleDrawer()" aria-label="메뉴 열기">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+    </svg>
+  </button>
+
+  <!-- 우상단 컨트롤 -->
+  <div class="controls">
+    <button class="ctl-btn" id="themeBtn" onclick="cycleTheme()" aria-label="테마 전환">
+      <span id="themeIcon"></span>
+    </button>
+    <div class="viz-menu">
+      <button class="ctl-btn" onclick="toggleMenu()" aria-label="메뉴">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+        </svg>
+      </button>
+      <div class="viz-menu-dropdown" id="vizMenuDropdown">
+        <button onclick="cycleTheme()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <span id="themeLabel">라이트 모드</span>
+        </button>
+        <button onclick="openCurrent()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          <span>새 탭에서 열기</span>
+        </button>
+        <button onclick="printCurrent()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+          <span>인쇄 / PDF</span>
+        </button>
+        <button onclick="downloadImage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          <span>화면 PNG 저장</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+    <div class="scrim" id="scrim" onclick="toggleDrawer()"></div>
+
+    <!-- ===== 사이드바 ===== -->
+    <aside class="sidebar" id="sidebar" aria-label="브리핑 탐색">
+      <div class="sb-brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round">
+            <path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="bt-title" id="brandTitle">AI Daily Digest</div>
+          <div class="bt-sub" id="brandSub">매일 아침 AI 브리핑</div>
+        </div>
+      </div>
+
+      <div class="sb-datechip" id="sbDateChip">—</div>
+
+      <nav class="sb-dates" id="sbDates" aria-label="날짜 선택"></nav>
+
+      <div class="sb-scroll">
+        <div class="sb-seclabel" id="sbSecLabel">주제</div>
+        <nav id="sbTopics" aria-label="주제 선택"></nav>
+      </div>
+
+      <div class="sb-foot">총 <strong id="sbCount">0</strong>개 파일 · 매일 08:00 갱신</div>
+    </aside>
+
+    <!-- ===== 콘텐츠 ===== -->
+    <main class="content" id="main-content" role="main">
+      <section style="height:100%" aria-label="브리핑 본문">
+        <iframe id="viewer" title="브리핑 본문" src="about:blank"></iframe>
+      </section>
+      <div class="content-loader" id="loader">
+        <div class="spinner"></div>
+        <span>브리핑 불러오는 중…</span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /* ============ 상태 ============ */
+    var M = window.DIGEST_MANIFEST || { site:{}, topics:[], days:[] };
+    var TOPIC_STYLE = {
+      blue:   { accent:'#4f7cff', soft:'rgba(79,124,255,0.16)',  line:'rgba(79,124,255,0.5)' },
+      purple: { accent:'#a06bff', soft:'rgba(160,107,255,0.16)', line:'rgba(160,107,255,0.5)' },
+      green:  { accent:'#2ec98a', soft:'rgba(46,201,138,0.16)',  line:'rgba(46,201,138,0.5)' }
+    };
+    var TOPIC_ICON = {
+      'ai-naver-news':
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg>',
+      'ai-current-affairs':
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>',
+      'ai-productivity':
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>'
+    };
+
+    var state = { date: null, topic: null, theme: 'dark' };
+
+    /* ============ 테마 ============ */
+    var SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+    var MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+
+    function applyTheme(t) {
+      state.theme = t;
+      document.documentElement.className = 'theme-' + t;
+      document.getElementById('themeIcon').innerHTML = (t === 'dark') ? MOON : SUN;
+      document.getElementById('themeLabel').textContent = (t === 'dark') ? '라이트 모드' : '다크 모드';
+      try { localStorage.setItem('digest-theme', t); } catch (e) {}
+      var vw = document.getElementById('viewer');
+      if (vw && vw.contentWindow) {
+        try { vw.contentWindow.postMessage({ type:'digest-theme', theme:t }, '*'); } catch (e) {}
+      }
+    }
+    function cycleTheme() { applyTheme(state.theme === 'dark' ? 'light' : 'dark'); }
+
+    /* ============ 메뉴 ============ */
+    function toggleMenu() { document.getElementById('vizMenuDropdown').classList.toggle('open'); }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.viz-menu')) document.getElementById('vizMenuDropdown').classList.remove('open');
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        document.getElementById('vizMenuDropdown').classList.remove('open');
+        if (window.innerWidth <= 860) document.getElementById('app').classList.remove('drawer-open');
+      }
+    });
+
+    /* ============ 모바일 드로어 ============ */
+    function toggleDrawer() { document.getElementById('app').classList.toggle('drawer-open'); }
+
+    /* ============ 조회 도우미 ============ */
+    function getDay(date) {
+      for (var i = 0; i < M.days.length; i++) if (M.days[i].date === date) return M.days[i];
+      return null;
+    }
+    function getTopic(id) {
+      for (var i = 0; i < M.topics.length; i++) if (M.topics[i].id === id) return M.topics[i];
+      return null;
+    }
+    function getEntry(date, topicId) {
+      var d = getDay(date); if (!d) return null;
+      for (var i = 0; i < d.entries.length; i++) if (d.entries[i].topic === topicId) return d.entries[i];
+      return null;
+    }
+
+    /* ============ 사이드바 렌더 ============ */
+    function renderDates() {
+      var box = document.getElementById('sbDates');
+      box.innerHTML = '';
+      M.days.forEach(function (d) {
+        var b = document.createElement('button');
+        b.className = 'date-tab' + (d.date === state.date ? ' active' : '');
+        b.textContent = d.label;
+        b.setAttribute('aria-pressed', d.date === state.date ? 'true' : 'false');
+        b.onclick = function () { selectDate(d.date); };
+        box.appendChild(b);
+      });
+    }
+
+    function renderTopics() {
+      var day = getDay(state.date);
+      var box = document.getElementById('sbTopics');
+      box.innerHTML = '';
+      if (!day) return;
+      document.getElementById('sbSecLabel').textContent =
+        day.date.replace(/-/g, '. ') + '. (' + day.weekday + ')';
+
+      day.entries.forEach(function (entry, idx) {
+        var topic = getTopic(entry.topic);
+        if (!topic) return;
+        var st = TOPIC_STYLE[topic.accent] || TOPIC_STYLE.blue;
+
+        var btn = document.createElement('button');
+        btn.className = 'topic-item animate' + (entry.topic === state.topic ? ' active' : '');
+        btn.style.animationDelay = (idx * 0.05) + 's';
+        btn.style.setProperty('--ti-accent', st.accent);
+        btn.style.setProperty('--ti-soft', st.soft);
+        btn.style.setProperty('--ti-line', st.line);
+        btn.setAttribute('aria-current', entry.topic === state.topic ? 'page' : 'false');
+
+        btn.innerHTML =
+          '<span class="ti-icon">' + (TOPIC_ICON[topic.id] || '') + '</span>' +
+          '<span class="ti-main">' +
+            '<span class="ti-label">' + topic.label + '</span>' +
+            '<span class="ti-head">' + (entry.headline || '') + '</span>' +
+          '</span>' +
+          '<span class="ti-chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></span>';
+        btn.onclick = function () { selectTopic(entry.topic); };
+        box.appendChild(btn);
+      });
+    }
+
+    function renderChrome() {
+      document.getElementById('brandTitle').textContent = (M.site && M.site.title) || 'AI Daily Digest';
+      document.getElementById('brandSub').textContent = (M.site && M.site.subtitle) || '';
+      var newest = M.days[0];
+      if (newest) {
+        document.getElementById('sbDateChip').textContent =
+          newest.date.replace(/^\d+-/, '').replace('-', '월 ') + '일 ' + newest.weekday;
+      }
+      var total = 0;
+      M.days.forEach(function (d) { total += d.entries.length; });
+      document.getElementById('sbCount').textContent = total;
+    }
+
+    /* ============ 선택 동작 ============ */
+    function selectDate(date) {
+      state.date = date;
+      var day = getDay(date);
+      if (day && !getEntry(date, state.topic)) {
+        state.topic = day.entries.length ? day.entries[0].topic : null;
+      }
+      renderDates(); renderTopics(); loadViewer(); writeHash();
+    }
+
+    function selectTopic(topicId) {
+      state.topic = topicId;
+      renderTopics(); loadViewer(); writeHash();
+      if (window.innerWidth <= 860) document.getElementById('app').classList.remove('drawer-open');
+    }
+
+    function loadViewer() {
+      var entry = getEntry(state.date, state.topic);
+      var loader = document.getElementById('loader');
+      var vw = document.getElementById('viewer');
+      if (!entry) {
+        loader.classList.remove('hidden');
+        loader.querySelector('span').textContent = '해당 브리핑이 없습니다.';
+        vw.src = 'about:blank';
+        return;
+      }
+      loader.classList.remove('hidden');
+      loader.querySelector('span').textContent = '브리핑 불러오는 중…';
+      vw.src = entry.file + '?theme=' + state.theme;
+    }
+
+    document.getElementById('viewer').addEventListener('load', function () {
+      var vw = this;
+      if (vw.src === 'about:blank' || vw.src === '') return;
+      document.getElementById('loader').classList.add('hidden');
+      try { vw.contentWindow.postMessage({ type:'digest-theme', theme:state.theme }, '*'); } catch (e) {}
+      try { vw.contentDocument.documentElement.scrollTop = 0; } catch (e) {}
+    });
+
+    /* ============ 메뉴 동작 ============ */
+    function openCurrent() {
+      var entry = getEntry(state.date, state.topic);
+      if (entry) window.open(entry.file + '?theme=' + state.theme, '_blank');
+    }
+    function printCurrent() {
+      var vw = document.getElementById('viewer');
+      try { vw.contentWindow.focus(); vw.contentWindow.print(); }
+      catch (e) { window.print(); }
+    }
+    async function downloadImage() {
+      var t = document.querySelector('.controls'); t.style.visibility = 'hidden';
+      try {
+        var url = await htmlToImage.toPng(document.getElementById('app'), { pixelRatio: 2 });
+        var a = document.createElement('a');
+        a.href = url; a.download = 'ai-daily-digest.png'; a.click();
+      } catch (e) { console.error('PNG 저장 실패:', e); }
+      t.style.visibility = '';
+    }
+
+    /* ============ 해시 딥링크 ============ */
+    function writeHash() {
+      if (state.date && state.topic) {
+        history.replaceState(null, '', '#/' + state.date + '/' + state.topic);
+      }
+    }
+    function readHash() {
+      var m = (location.hash || '').match(/^#\/(\d{4}-\d{2}-\d{2})\/([a-z0-9-]+)$/i);
+      if (m && getEntry(m[1], m[2])) { state.date = m[1]; state.topic = m[2]; return true; }
+      return false;
+    }
+    window.addEventListener('hashchange', function () {
+      if (readHash()) { renderDates(); renderTopics(); loadViewer(); }
+    });
+
+    /* ============ 초기화 ============ */
+    function init() {
+      var saved;
+      try { saved = localStorage.getItem('digest-theme'); } catch (e) {}
+      applyTheme(saved === 'light' ? 'light' : 'dark');
+
+      if (!M.days || !M.days.length) {
+        document.getElementById('loader').querySelector('span').textContent =
+          'manifest.js 에 브리핑 데이터가 없습니다.';
+        renderChrome();
+        return;
+      }
+
+      renderChrome();
+      if (!readHash()) {
+        state.date = M.days[0].date;
+        state.topic = M.days[0].entries.length ? M.days[0].entries[0].topic : null;
+      }
+      renderDates(); renderTopics(); loadViewer(); writeHash();
+    }
+    init();
+  </script>
+</body>
+</html>
