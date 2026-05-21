@@ -49,19 +49,19 @@ window.DIGEST_MANIFEST = {
         {
           topic: "ai-naver-news",
           file: "pages/2026-05-21/ai-naver-news.html",
-          headline: "구글 딥마인드 서울 캠퍼스…빅테크 한국 전진기지화",
+          headline: "클로드 12배 폭증·K-메모리 구애",
           count: 7
         },
         {
           topic: "ai-current-affairs",
           file: "pages/2026-05-21/ai-current-affairs.html",
-          headline: "데이터로 증명된 AI 일자리 재편",
+          headline: "AI 일자리 변동, 한국이 한복판",
           count: 5
         },
         {
           topic: "ai-productivity",
           file: "pages/2026-05-21/ai-productivity.html",
-          headline: "입문에서 심화까지 AI 도구 전략",
+          headline: "Claude Code로 야근 끝내기",
           count: 5
         }
       ]
