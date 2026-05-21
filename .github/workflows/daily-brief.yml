@@ -36,4 +36,5 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           PROMPT=$(cat GENERATE.md)
-          claude -p "$PROMPT"
+          claude -p "$PROMPT" \
+            --allowedTools "WebSearch,WebFetch,Bash,Read,Write,Edit,Glob,Grep"
