@@ -52,6 +52,16 @@ window.DIGEST_MANIFEST = {
       ]
     },
     {
+      date: "2026-05-23",
+      label: "5월 23일",
+      weekday: "토",
+      entries: [
+        { topic: "ai-naver-news",      file: "pages/2026-05-23/ai-naver-news.html",      headline: "MS 임원진 해체·메타 데이터센터 한국 4조 수주", count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-23/ai-current-affairs.html", headline: "빅테크가 한국 필요한 이유·클로드 1위", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-23/ai-productivity.html",    headline: "AI 네이티브 컴퍼니·멀티 에이전트 자동화", count: 5 }
+      ]
+    },
+    {
       date: "2026-05-22",
       label: "5월 22일",
       weekday: "금",
