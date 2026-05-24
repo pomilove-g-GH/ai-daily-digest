@@ -42,6 +42,16 @@ window.DIGEST_MANIFEST = {
   /* 날짜별 항목 — 최신순(맨 앞이 가장 최근) */
   days: [
     {
+      date: "2026-05-23",
+      label: "5월 23일",
+      weekday: "토",
+      entries: [
+        { topic: "ai-naver-news",      file: "pages/2026-05-23/ai-naver-news.html",      headline: "MS 조직 해체·딥시크 가격파괴·미·스웨덴 기술동맹", count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-23/ai-current-affairs.html", headline: "창작·금융·감정… AI가 침투한 인간 영역", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-23/ai-productivity.html",    headline: "클로드 코워크 윈도우 출시·자동화 신기능", count: 5 }
+      ]
+    },
+    {
       date: "2026-05-22",
       label: "5월 22일",
       weekday: "금",
