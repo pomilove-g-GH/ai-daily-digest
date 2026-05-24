@@ -28,6 +28,11 @@
 ## 1. 날짜 준비
 
 - 한국 시각(KST) 기준 오늘 날짜를 구한다. `get_current_korean_time` 도구가 있으면 사용한다.
+- **도구 없으면 반드시 KST를 명시해 Bash로 계산** (그냥 `date`는 UTC 반환할 수 있음):
+  ```bash
+  TZ=Asia/Seoul date +"%Y-%m-%d %-m월 %-d일 %a"
+  ```
+  GitHub Actions 환경은 job-level `env: TZ: Asia/Seoul` 설정돼 있어 보통 `date`도 KST 반환하나, **확신 못 하면 위 명령으로 강제 지정**해 확인할 것.
 - 다음 형식들을 만들어 둔다:
   - `DATE` = `YYYY-MM-DD` (예: `2026-05-22`) — 폴더명·manifest용
   - `LABEL` = `M월 D일` (예: `5월 22일`) — 사이드바 탭용
@@ -54,13 +59,17 @@
 
 영상 5개를 확정하기 전에, 각 영상의 **채널명·제목을 추측하지 말고 반드시 확인**한다:
 
-- 영상 ID마다 oEmbed API를 호출한다:
-  `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={ID}&format=json`
-- 응답 JSON의 `author_name` = **채널명**, `title` = **영상 제목**. 이 값을 그대로 쓴다.
-  - `channel-badge`에는 `author_name`을 **글자 그대로** 넣는다.
+- 영상 ID마다 oEmbed API를 호출한다. **`WebFetch` 금지** (모델 transcription 단계에서 한글이 깨질 수 있음 — 예: `백과` → `뱅크`).
+- 반드시 **Bash + curl로 raw JSON**을 받고 Python으로 파싱한다:
+  ```bash
+  curl -s "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={ID}&format=json" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print('CH:'+d['author_name']); print('TI:'+d['title'])"
+  ```
+- 출력의 `author_name` = **채널명**, `title` = **영상 제목**. 이 값을 **글자 그대로** 페이지에 사용한다.
+  - `channel-badge`에는 `author_name`을 **trim 후 그대로** 넣는다.
   - oEmbed가 404 등으로 실패하면 그 영상은 **버리고 다른 영상으로 교체**한다 (비공개·삭제·잘못된 ID).
 - **§2-2 / §2-3의 "선호 채널 예시" 목록은 검색 대상 참고용일 뿐**, 채널명 표기에 쓰지 않는다.
-  검색 결과 스니펫에 채널명이 안 보여도 그 목록에서 **추측해 채우지 않는다.** 반드시 oEmbed로 확인.
+  검색 결과 스니펫에 채널명이 안 보여도 그 목록에서 **추측해 채우지 않는다.** 반드시 curl+JSON으로 확인.
 
 ### 2-1. AI 네이버 뉴스 — `ai-naver-news` (topic-blue, 히어로 A)
 
