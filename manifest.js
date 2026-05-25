@@ -42,6 +42,16 @@ window.DIGEST_MANIFEST = {
   /* 날짜별 항목 — 최신순(맨 앞이 가장 최근) */
   days: [
     {
+      date: "2026-05-25",
+      label: "5월 25일",
+      weekday: "월",
+      entries: [
+        { topic: "ai-naver-news",      file: "pages/2026-05-25/ai-naver-news.html",      headline: "구글 에이전트 시대·앤트로픽 74조 기업 추월", count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-25/ai-current-affairs.html", headline: "피지컬 AI·일자리 재편·한국 AI 전환점", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-25/ai-productivity.html",    headline: "클로드 코드 자동화·스킬 생태계 구축", count: 5 }
+      ]
+    },
+    {
       date: "2026-05-24",
       label: "5월 24일",
       weekday: "일",
