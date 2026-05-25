@@ -162,15 +162,15 @@ title `오늘의 AI 업무활용 유튜브 엄선 5선`, sub `실무 적용 가�
       label: "<LABEL>",
       weekday: "<WEEKDAY>",
       entries: [
-        { topic: "ai-naver-news",      file: "pages/<DATE>/ai-naver-news.html",      headline: "<뉴스 대표 한 줄>", count: <기사수> },
-        { topic: "ai-current-affairs", file: "pages/<DATE>/ai-current-affairs.html", headline: "<영상 대표 한 줄>", count: 5 },
-        { topic: "ai-productivity",    file: "pages/<DATE>/ai-productivity.html",    headline: "<영상 대표 한 줄>", count: 5 }
+        { topic: "ai-naver-news",      file: "pages/<DATE>/ai-naver-news.html",      count: <기사수> },
+        { topic: "ai-current-affairs", file: "pages/<DATE>/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/<DATE>/ai-productivity.html",    count: 5 }
       ]
     },
 ```
 
-- `headline`은 사이드바에 보이는 짧은 요약(20자 내외).
 - 오늘 날짜 항목이 **이미 있으면** 새로 추가하지 말고 그 항목을 교체한다.
+- `headline` 필드는 더 이상 쓰지 않는다 (사이드바에서 제거됨). 기존에 있어도 무해하지만 새로 작성하지 않는다.
 - `topics` 배열은 수정하지 않는다.
 
 ---

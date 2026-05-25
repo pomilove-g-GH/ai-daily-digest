@@ -56,9 +56,9 @@ window.DIGEST_MANIFEST = {
       label: "5월 24일",
       weekday: "일",
       entries: [
-        { topic: "ai-naver-news",      file: "pages/2026-05-24/ai-naver-news.html",      headline: "MS 조직 해체·딥시크 가격파괴·미·스웨덴 기술동맹", count: 7 },
-        { topic: "ai-current-affairs", file: "pages/2026-05-24/ai-current-affairs.html", headline: "창작·금융·감정… AI가 침투한 인간 영역", count: 5 },
-        { topic: "ai-productivity",    file: "pages/2026-05-24/ai-productivity.html",    headline: "클로드 코워크 윈도우 출시·자동화 신기능", count: 5 }
+        { topic: "ai-naver-news",      file: "pages/2026-05-24/ai-naver-news.html",      count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-24/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-24/ai-productivity.html",    count: 5 }
       ]
     },
     {
@@ -66,9 +66,9 @@ window.DIGEST_MANIFEST = {
       label: "5월 23일",
       weekday: "토",
       entries: [
-        { topic: "ai-naver-news",      file: "pages/2026-05-23/ai-naver-news.html",      headline: "MS 임원진 해체·메타 데이터센터 한국 4조 수주", count: 7 },
-        { topic: "ai-current-affairs", file: "pages/2026-05-23/ai-current-affairs.html", headline: "빅테크가 한국 필요한 이유·클로드 1위", count: 5 },
-        { topic: "ai-productivity",    file: "pages/2026-05-23/ai-productivity.html",    headline: "AI 네이티브 컴퍼니·멀티 에이전트 자동화", count: 5 }
+        { topic: "ai-naver-news",      file: "pages/2026-05-23/ai-naver-news.html",      count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-23/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-23/ai-productivity.html",    count: 5 }
       ]
     },
     {
@@ -76,9 +76,9 @@ window.DIGEST_MANIFEST = {
       label: "5월 22일",
       weekday: "금",
       entries: [
-        { topic: "ai-naver-news",      file: "pages/2026-05-22/ai-naver-news.html",      headline: "구글I/O 에이전틱 AI·클로드 급성장", count: 7 },
-        { topic: "ai-current-affairs", file: "pages/2026-05-22/ai-current-affairs.html", headline: "자율 AI 에이전트 시대의 경계선", count: 5 },
-        { topic: "ai-productivity",    file: "pages/2026-05-22/ai-productivity.html",    headline: "클로드 코워크로 업무 자동화 혁명", count: 5 }
+        { topic: "ai-naver-news",      file: "pages/2026-05-22/ai-naver-news.html",      count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-22/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-22/ai-productivity.html",    count: 5 }
       ]
     },
     {
@@ -86,24 +86,9 @@ window.DIGEST_MANIFEST = {
       label: "5월 21일",
       weekday: "목",
       entries: [
-        {
-          topic: "ai-naver-news",
-          file: "pages/2026-05-21/ai-naver-news.html",
-          headline: "클로드 12배 폭증·K-메모리 구애",
-          count: 7
-        },
-        {
-          topic: "ai-current-affairs",
-          file: "pages/2026-05-21/ai-current-affairs.html",
-          headline: "AI 일자리 변동, 한국이 한복판",
-          count: 5
-        },
-        {
-          topic: "ai-productivity",
-          file: "pages/2026-05-21/ai-productivity.html",
-          headline: "Claude Code로 야근 끝내기",
-          count: 5
-        }
+        { topic: "ai-naver-news",      file: "pages/2026-05-21/ai-naver-news.html",      count: 7 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-21/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-21/ai-productivity.html",    count: 5 }
       ]
     },
     {
@@ -111,24 +96,9 @@ window.DIGEST_MANIFEST = {
       label: "5월 20일",
       weekday: "수",
       entries: [
-        {
-          topic: "ai-naver-news",
-          file: "pages/2026-05-20/ai-naver-news.html",
-          headline: "삼성·SK 온디바이스 AI 반도체 동시 공개",
-          count: 6
-        },
-        {
-          topic: "ai-current-affairs",
-          file: "pages/2026-05-20/ai-current-affairs.html",
-          headline: "AI 저작권·딥페이크 규제 논쟁 가열",
-          count: 5
-        },
-        {
-          topic: "ai-productivity",
-          file: "pages/2026-05-20/ai-productivity.html",
-          headline: "회의록부터 보고서까지 AI 업무 자동화",
-          count: 5
-        }
+        { topic: "ai-naver-news",      file: "pages/2026-05-20/ai-naver-news.html",      count: 6 },
+        { topic: "ai-current-affairs", file: "pages/2026-05-20/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-05-20/ai-productivity.html",    count: 5 }
       ]
     }
   ]

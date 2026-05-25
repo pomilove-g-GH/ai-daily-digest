@@ -132,12 +132,6 @@
     }
     .ti-main { flex: 1; min-width: 0; }
     .ti-label { font-size: 13px; font-weight: 600; line-height: 1.3; }
-    .ti-head {
-      font-size: 11px; color: var(--text-faint); font-weight: 500;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-top: 2px;
-    }
-    .topic-item.active .ti-head { color: var(--text-secondary); }
     .ti-chev { color: var(--text-faint); flex-shrink: 0; transition: transform 0.16s; }
     .topic-item:hover .ti-chev { transform: translateX(2px); }
 
@@ -437,7 +431,6 @@
           '<span class="ti-icon">' + (TOPIC_ICON[topic.id] || '') + '</span>' +
           '<span class="ti-main">' +
             '<span class="ti-label">' + topic.label + '</span>' +
-            '<span class="ti-head">' + (entry.headline || '') + '</span>' +
           '</span>' +
           '<span class="ti-chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></span>';
         btn.onclick = function () { selectTopic(entry.topic); };
