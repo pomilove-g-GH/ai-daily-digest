@@ -42,6 +42,16 @@ window.DIGEST_MANIFEST = {
   /* 날짜별 항목 — 최신순(맨 앞이 가장 최근) */
   days: [
     {
+      date: "2026-06-23",
+      label: "6월 23일",
+      weekday: "화",
+      entries: [
+        { topic: "ai-naver-news",      file: "pages/2026-06-23/ai-naver-news.html",      count: 8 },
+        { topic: "ai-current-affairs", file: "pages/2026-06-23/ai-current-affairs.html", count: 5 },
+        { topic: "ai-productivity",    file: "pages/2026-06-23/ai-productivity.html",    count: 5 }
+      ]
+    },
+    {
       date: "2026-06-21",
       label: "6월 21일",
       weekday: "일",
