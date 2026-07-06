@@ -82,23 +82,50 @@
       background: var(--accent-secondary); box-shadow: 0 0 8px var(--accent-secondary);
     }
 
-    /* date tabs */
+    /* date accordion (월별) */
     .sb-dates {
-      display: flex; flex-wrap: wrap; gap: 7px;
-      padding: 0 16px 16px; margin: 0 4px;
-      border-bottom: 1px solid var(--border);
+      flex: 1; overflow-y: auto;
+      padding: 8px 14px 10px; margin: 0 4px;
     }
-    .date-tab {
-      padding: 7px 13px; border-radius: 9px;
+    .month-group { margin-bottom: 6px; }
+    .month-header {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 9px 11px; margin-bottom: 3px;
       background: var(--sidebar-2); border: 1px solid var(--border);
-      color: var(--text-secondary); font-size: 12.5px; font-weight: 600;
-      transition: all 0.16s;
+      border-radius: 10px; cursor: pointer;
+      color: var(--text); font-size: 12.5px; font-weight: 700;
+      transition: border-color 0.16s;
     }
-    .date-tab:hover { color: var(--text); border-color: var(--border-strong); }
-    .date-tab.active {
+    .month-header:hover { border-color: var(--border-strong); }
+    .mh-left { display: flex; align-items: center; gap: 7px; }
+    .mh-chev { flex-shrink: 0; color: var(--text-faint); transition: transform 0.2s; }
+    .month-header.collapsed .mh-chev { transform: rotate(-90deg); }
+    .mh-count {
+      font-size: 11px; font-weight: 600; color: var(--text-faint);
+      background: var(--surface-hover); padding: 1px 8px; border-radius: 999px;
+    }
+    .date-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+      padding: 5px 2px 9px;
+    }
+    .date-grid.collapsed { display: none; }
+    .date-chip {
+      padding: 7px 0; text-align: center;
+      background: var(--sidebar-2); border: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 12px; font-weight: 600;
+      border-radius: 9px; transition: all 0.16s;
+    }
+    .date-chip:hover { color: var(--text); border-color: var(--border-strong); }
+    .date-chip.active {
       background: linear-gradient(135deg, #5b63f0, #6366f1);
       border-color: transparent; color: #fff;
       box-shadow: 0 4px 12px rgba(99,102,241,0.45);
+    }
+    /* 선택 날짜 아래 주제 인라인 (그리드 전체 폭) */
+    .date-cats {
+      grid-column: 1 / -1;
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 2px 0 8px;
     }
 
     /* topic list */
@@ -304,12 +331,7 @@
 
       <div class="sb-datechip" id="sbDateChip">—</div>
 
-      <nav class="sb-dates" id="sbDates" aria-label="날짜 선택"></nav>
-
-      <div class="sb-scroll">
-        <div class="sb-seclabel" id="sbSecLabel">주제</div>
-        <nav id="sbTopics" aria-label="주제 선택"></nav>
-      </div>
+      <nav class="sb-dates" id="sbDates" aria-label="날짜 및 주제 선택"></nav>
 
       <div class="sb-foot">총 <strong id="sbCount">0</strong>개 파일 · 매일 06:00 갱신</div>
     </aside>
@@ -393,26 +415,75 @@
     }
 
     /* ============ 사이드바 렌더 ============ */
-    function renderDates() {
+    function renderDateAccordion() {
       var box = document.getElementById('sbDates');
       box.innerHTML = '';
+
+      // YYYY-MM 기준 그룹핑 (최신월 먼저, days는 최신순)
+      var groups = [], idx = {};
       M.days.forEach(function (d) {
-        var b = document.createElement('button');
-        b.className = 'date-tab' + (d.date === state.date ? ' active' : '');
-        b.textContent = d.label;
-        b.setAttribute('aria-pressed', d.date === state.date ? 'true' : 'false');
-        b.onclick = function () { selectDate(d.date); };
-        box.appendChild(b);
+        var mk = d.date.slice(0, 7);
+        if (!(mk in idx)) { idx[mk] = groups.length; groups.push({ month: mk, days: [] }); }
+        groups[idx[mk]].days.push(d);
       });
+
+      groups.forEach(function (g, gi) {
+        var parts = g.month.split('-');
+        var mlabel = parts[0] + '년 ' + parseInt(parts[1], 10) + '월';
+        var hasActive = g.days.some(function (d) { return d.date === state.date; });
+        var collapsed = !(hasActive || (!state.date && gi === 0));
+
+        var group = document.createElement('div');
+        group.className = 'month-group';
+
+        var header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'month-header' + (collapsed ? ' collapsed' : '');
+        header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        header.innerHTML =
+          '<span class="mh-left"><svg class="mh-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>' + mlabel + '</span>' +
+          '<span class="mh-count">' + g.days.length + '</span>';
+
+        var grid = document.createElement('div');
+        grid.className = 'date-grid' + (collapsed ? ' collapsed' : '');
+
+        g.days.forEach(function (d) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'date-chip' + (d.date === state.date ? ' active' : '');
+          b.setAttribute('data-date', d.date);
+          b.textContent = d.label;
+          b.setAttribute('aria-pressed', d.date === state.date ? 'true' : 'false');
+          b.onclick = function () { selectDate(d.date); };
+          grid.appendChild(b);
+        });
+
+        header.onclick = function () {
+          var c = header.classList.toggle('collapsed');
+          grid.classList.toggle('collapsed', c);
+          header.setAttribute('aria-expanded', c ? 'false' : 'true');
+        };
+
+        group.appendChild(header);
+        group.appendChild(grid);
+        box.appendChild(group);
+      });
+
+      renderInlineTopics();
     }
 
-    function renderTopics() {
+    // 선택된 날짜 칩 바로 아래에 주제(카테고리) 인라인 표시
+    function renderInlineTopics() {
+      var old = document.querySelector('.date-cats');
+      if (old) old.remove();
+
       var day = getDay(state.date);
-      var box = document.getElementById('sbTopics');
-      box.innerHTML = '';
       if (!day) return;
-      document.getElementById('sbSecLabel').textContent =
-        day.date.replace(/-/g, '. ') + '. (' + day.weekday + ')';
+      var chip = document.querySelector('.date-chip[data-date="' + state.date + '"]');
+      if (!chip) return;
+
+      var panel = document.createElement('div');
+      panel.className = 'date-cats';
 
       day.entries.forEach(function (entry, idx) {
         var topic = getTopic(entry.topic);
@@ -420,6 +491,7 @@
         var st = TOPIC_STYLE[topic.accent] || TOPIC_STYLE.blue;
 
         var btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'topic-item animate' + (entry.topic === state.topic ? ' active' : '');
         btn.style.animationDelay = (idx * 0.05) + 's';
         btn.style.setProperty('--ti-accent', st.accent);
@@ -434,8 +506,10 @@
           '</span>' +
           '<span class="ti-chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></span>';
         btn.onclick = function () { selectTopic(entry.topic); };
-        box.appendChild(btn);
+        panel.appendChild(btn);
       });
+
+      chip.insertAdjacentElement('afterend', panel);
     }
 
     function renderChrome() {
@@ -458,12 +532,12 @@
       if (day && !getEntry(date, state.topic)) {
         state.topic = day.entries.length ? day.entries[0].topic : null;
       }
-      renderDates(); renderTopics(); loadViewer(); writeHash();
+      renderDateAccordion(); loadViewer(); writeHash();
     }
 
     function selectTopic(topicId) {
       state.topic = topicId;
-      renderTopics(); loadViewer(); writeHash();
+      renderInlineTopics(); loadViewer(); writeHash();
       if (window.innerWidth <= 860) document.getElementById('app').classList.remove('drawer-open');
     }
 
@@ -522,7 +596,7 @@
       return false;
     }
     window.addEventListener('hashchange', function () {
-      if (readHash()) { renderDates(); renderTopics(); loadViewer(); }
+      if (readHash()) { renderDateAccordion(); loadViewer(); }
     });
 
     /* ============ 초기화 ============ */
@@ -548,7 +622,7 @@
       if (h && h[1] === state.date && getEntry(h[1], h[2])) {
         state.topic = h[2];
       }
-      renderDates(); renderTopics(); loadViewer(); writeHash();
+      renderDateAccordion(); loadViewer(); writeHash();
     }
     init();
   </script>
